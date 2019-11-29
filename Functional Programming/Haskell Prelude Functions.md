@@ -1,267 +1,292 @@
-## Haskell Prelude Functions
 
-### head
+
+### Head - 2019, 2016 
 
 ---
 
-```head xs ``` returns the first element of ```xs``` , if the list is non-empty
+Returns the first element of a list, if it is non-empty, with a runtime error otherwise. 
 
 ```haskell
-head :: [a] -> a -- Type signature 
-head (x:_) = x -- Non-Empty List
-head [] = error "Prelude.head: empty list" -- Empty List
+head :: [a] -> a
+head (x:_) = x
+head [] = error "Empty List"
 ```
 
-###tail
+### Last - 2019
 
 ---
 
-``` tail xs ```, for non-empty ```xs``` returns it with first element removed
+Returns the last element of a list, if it is non-empty, with a runtime error otherwise.
 
 ```haskell
-tail :: [a] -> [a] -- Type Signature
-tail (_:xs) = xs -- Non-Empty List
-tail [] = error "Prelude.tail: empty list" -- Empty List
+last :: [a] -> a
+last [x] = x
+last (_:xs) = last xs
+last [] = error "Empty List"
 ```
 
-### last
+### (++) - 2019, 2018, 2014 
 
 ---
 
-```last xs ``` returns the last element of ```xs```, if non-empty
-
-```Haskell
-last :: [a] -> a -- Type Signature
-last [x] = x -- Singleton list, most occur before (_:xs)
-last (_:xs) = last xs -- Non-Empty List
-last [] = error "Prelude.last: empty list" -- Empty List
-```
-
-### init 
-
----
-
-``` init xs```, for non-empty ```xs``` reutrns it with last element removed
-
-```Haskell
-init :: [a] -> [a] -- Type Signature
-init [x] = [] -- Singleton List
-init (x:xs) = x : init xs -- Non-Empty List 
-init [] = error "Prelude.init: empty list" -- Empty List 
-```
-
-### null
-
----
-
-```null xs``` returns ```True``` if the list is empty 
-
-```Haskell
-null :: [a] -> Bool -- Type Signature
-null [] = True -- Empty List
-null (_:_) = False -- Non-Empty List
-```
-
-### ++ 
-
----
-
-``` xs ++ ys``` joins lists ```xs``` and ```ys``` together 
+Concatenates two lists togethers 
 
 ```haskell
-(++) :: [a] -> [a] - [a] -- Type Signature
-[] ++ ys = ys -- Empty List
-(x:xs) ++ ys = x : (xs ++ ys) -- Non-Empty List
+(++) :: [a] -> [a] - [a]
+[] ++ ys = ys
+(x:xs) ++ ys = x : (xs ++ ys)
 ```
 
-### reverse (Slow with ++ function)
+### Reverse - 2019, 2018, 2014 
 
 ---
 
-``` reverse xs ``` reverses the list ``` xs``` 
+Reverse its list argument
 
 ```haskell
-reverse :: [a] -> [a] -- Type Signature 
-reverse [] = [] -- Empty List
-reverse (x:xs) = reverse xs ++ [x]  -- Non-Empty List
-
-(++) :: [a] -> [a] - [a] -- Type Signature
-[] ++ ys = ys -- Empty List
-(x:xs) ++ ys = x : (xs ++ ys) -- Non-Empty List
+reverse :: [a] -> [a]
+reverse [] = []
+reverse (x:xs) = reverse xs ++ [x]
 ```
 
-### (!!)
+### Span - 2019, 2016
 
 ---
 
-``` (!!) xs n```,or ``` xs !! n ``` selects the ```n```th element of list ```xs``` , provided it is long enough. Indices start at 0.
+Uses a predicate to split a list into two, the first being the longest prefix that satisfies the predicate, while the second lit is what remains 
 
 ```haskell
-(!!) :: [a] -> Int -> a -- Type Signature
-xs !! n | n < 0 = error "Prelude.!!: negative index" -- Negative Index
-[] !! _ = error "Prelude.!!: index too large" -- Empty List
-(x:_) !! 0 = x -- Zero Index
-(_:xs) !! n = xs !! (n - 1) -- Non-Zero Index
+span :: (a -> Bool) -> [a] -> ([a],[a])
+span p [] = ([],[])
+span p (x:xs)
+	| px = let (before, after) = span p xs in (x:before, after)
+	| otherwise = ([], x:xs)
 ```
 
-### take
+### Minimum - 2019, 2015 
 
 ---
 
-Returns a specified number of elements from a specified list. For instance ``` take 3 [5,4,3,2,1] ``` will return ```[5,4,3]```. 
-
-```Haskell
-take :: Int -> [a] -> [a] -- Type Signature 
-take n _ | n <= 0 = [] -- If n is <=0 just return []
-take _ [] = [] -- If the [] then return []
-take n (x:xs) = x : take (n - 1) xs -- 
-```
-
-### drop 
-
-----
-
-Drops the specified number of elements from the beginning of a list
-
-```Haskell
-drop :: Int -> [a] -> [a]
-drop n xs | n <= 0 = xs
-drop _ [] = []
-drop n (n:xs) = drop (n - 1) xs
-```
-
-### splitAt 
-
----
-
-Splits a given into two lists at a specified index 
+Compute the minimum of a non-empty list 
 
 ```haskell
-splitAt :: Int -> [a] -> ([a], [a])
-splitAt n xs | n <= 0 = ([], xs)
-splitAt _ [] = ([],[])
-splitAt n (x:xs) 
-	= let (xs1, xs2) = splitAt (n - 1) xs
-	in (x:xs1, xs2)
-```
-
-### span
-
----
-
-Uses a predicate to split a list into two, the first list being the longest prefix that satisfies the predicate, while the second list is what remains.
-
-
-
-### minimum
-
----
-
-Finds the smallest value in a non-empty list. The class constraint (Ord a) ensures that the operation of the typecalss ```Ord``` work on items in the list. 
-
-```haskell
-minimum :: Ord => [a] -> [a]
-minimum [] = error "Maximum of empty list"
+minimum :: Ord a => [a] -> a
+minimum [] = error "Empty List"
 minimum [x] = x
-minimum (x:xs) = min x (maximum xs)
+minimum (x:xs) = min x (minimum xs)
+
+min :: Ord a => a -> a -> a 
+min a b
+	| a < b = a
+	| a > b = b
+	| a == b = a 
 ```
 
-### maximum 
+### Tail - 2018, 2017, 2014  
 
 ---
 
-Takes a list of orderable things and returns the largest of them
+Returns the list with its first element removed, if it is non-empty, with a runtime error otherwise.
 
 ```haskell
-maximum :: (Ord a) => [a] -> a
-maximum [] = error "Maximum of empty list"
-maximum [x] = x
-maximum (x:xs) = max x (maximum xs)
+tail :: [a] -> [a]
+tail (_:xs) = xs
+tail [] = error "Empty List"
 ```
 
-### replicate 
+### Init - 2018, 2017, 2016, 2014 
 
 ---
 
-Takes an ```Int``` and a value and returns a list that has several repititions of that value 
+Returns everything but the last element of a list, if it is non-empty, with a runtime error otherwise.
 
 ```haskell
-replicate :: Int -> a -> [a]
-replicate n x
-	| n <= 0 = []
-	| otherwise = x : replicate (n - 1) x 
+init :: [a] -> [a]
+init [x] = [] 
+init (x:xs) = x : init xs
+init [] = error "Empty List"
 ```
 
-### break
+### Break - 2018, 2014 
 
 ---
 
-Uses a predicate to split a list into two, the first being the longest prefix that does not satisfy the predicate, while the second list is what remains
+Uses a predicate to split a list into two, the first being the longest prefix that does not satisfy the predicate, while the second is what remains.
 
 ```haskell
 break :: (a -> Bool) -> [a] -> ([a],[a])
+break _ xs@[] = (xs, xs)
+break p xs@(x:xs)
+	| px = ([],xs) -- If head satifies predicate, return empty list
+	| otherwise let (ys,zs) = break p xs in (x:ys, zs)
+	-- Call break with the tail 
 ```
 
-### repeat 
+### Maximum - 2018, 2014  
 
 ---
 
-The ```repeat``` function takes an element and returns and infinite list composed of that element. 
+Computes the maximum of a non-empty list
 
 ```haskell
-repeat :: a -> [a]
-repear x = x : repeat x
+maximum :: Ord a => [a] -> a
+maximum [] = error "Empty List"
+maximum [x] = x
+maximum (x:xs) = max x (maximum xs)
+
+max :: Ord a => a -> a -> a
+max a b
+	| a > b = a
+	| a < b = b
+	| a == b = a
 ```
 
-### concat
+### Last - 2017, 2016 
 
 ---
 
-Joins a list of lists together into a single list. For example ```concat [[1,2], [3]]``` creates the list ```[1,2,3]``` 
+Returns the last element of a list, if it is non-empty, with a runtime error otherwise
 
-### zip
+```haskell
+last :: [a] -> a
+last [x] = x
+last (_:xs) = last xs
+last [] = error "Empty List"
+```
+
+### SplitAt - 2017, Haskell Prelude Slides
 
 ---
 
-The ``` zip ``` function takes two lists and zips them together. For instance, calling ```zip [1,2,3] [7,8]``` returns ```[(1,7),(2,8)]``` 
+Split a list (its second argument) into two, the first being the prefix whose length equals the first argument (or the whole list if the list is shorter) while the second list is what remains, if anything.
+
+```haskell
+splitAt :: Int -> [a] -> ([a],[a])
+splitAt n xs | n <= 9 = ([], xs)
+splitAt _ [] = ([],[])
+splitAt n (x:xs)
+	= let (xs1, xs2) = splitAt (n - 1) xs
+		in (x:xs1, xs2)
+```
+
+### Replicate- 2017, 2015
+
+---
+
+This function call ```replicate n x ``` returns a list that is n copies of x
+
+```haskell
+replicate :: Int -> a -> [a]
+replicate 0 _ = []
+replicate n x = x : replicate (n - 1) x
+```
+
+### foldl1 - 2017, 2016 
+
+---
+
+Take a binary function and a non-empty list of elements and use the function to reduce the list down to one value with nesting to the left. 
+
+```haskell
+foldl1 :: (a -> a -> a) -> [a] -> a 
+foldl1 f (x:xs) = foldl f x xs
+foldl1 _ [] = error "Empty List"
+
+foldl :: (a -> a -> a) -> a -> [a] -> a
+foldl _ z [] = z
+foldl f z (x:xs) = foldl f (f z x) xs 
+```
+
+### !! - 2016
+
+---
+
+We can index into a list, starting from zero. So ```xs !! n ``` returns (n + 1)th element of ```xs``` provided n is non-negative and the length of the list is long enough. Otherwise, we get a run-time error
+
+```haskell
+!! :: [a] -> Int -> a
+xs !! n | n < 0 = error "Negative Index"
+[] !! _ = error "Index too Large"
+(x:_) !! 0 = x
+(_:xs) !! n = xs !! (n - 1)
+```
+
+### Null - Haskell Prelude Slides
+
+---
+
+Returns true if the list is empty
+
+```haskell
+null :: [a] -> Bool
+null [] = True
+null (_:_) = False
+```
+
+### Take - Haskell Prelude Slides
+
+---
+
+Returns a specified number of elements from a specified list
+
+```haskell
+take :: Int -> [a] -> [a]
+take n _ | n <= 0 = []
+take _ [] = []
+take n (x:xs) = x : take (n - 1) xs
+```
+
+### Drop - Haskell Prelude Slides
+
+---
+
+Drops a specific number of elements from the beginning of a list. 
+
+```Haskell 
+drop :: Int -> [a] -> [a]
+drop n xs | n <= 0 = xs
+drop _ [] = []
+drop n (x:xs) = drop (n - 1) xs
+```
+
+### Concat - 2015
+
+---
+
+Concat joins a list of lists together into a single list
+
+```haskell
+concat :: [[a]] -> [a]
+concat = foldr (++) []
+
+foldr :: (a -> b -> b) -> b -> [a] -> b
+foldr _ z [] = z
+foldr f z (x:xs) = f x (foldr f z xs)
+```
+
+### Zip - 2015
+
+---
+
+Creates a new list by joining elements at the same index in two input lists into pairs
 
 ```haskell
 zip :: [a] -> [b] -> [(a,b)]
 zip _ [] = []
-
+zip [] _ = []
+zip (x:xs) (y:ys) = (x,y):zip xs ys
 ```
 
-
-
-### unzip 
+### Unzip - 2015
 
 ---
 
-converts a list of pairs into a pair of lists by sending the first element of each input pair to one list, and the second element to another. For example, ```unzip [(1, 4), (2, 5),(3,6)]``` creates the pair ```([1,2,3], [4,5,6])```. Unzipping the empty list results in a pair of empty lists 
-
-### dropWhile
-
----
-
-### filter 
-
----
-
-
-
-### foldr1 
-
----
-
-
-
-### foldl1 
-
----
-
-Take a binary function and a non-empty list of elements and use the function to reduce the list down to one value with nesting to the left.
+Converts a list of pairs into a pair of lists by sending the first element of each input pair to one list and the second element to another 
 
 ```haskell
-foldl1 :: (a -> a -> a) -> [a] -> a 
+unzip :: [(a,b)] -> ([a], [b])
+unzip [] = ([],[])
+unzip((a,b):xs) = (a : i, b: i)
+	where i = unzip xs 
 ```
 
