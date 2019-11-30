@@ -32,7 +32,7 @@ last [] = error "Empty List"
 Concatenates two lists togethers 
 
 ```haskell
-(++) :: [a] -> [a] - [a]
+(++) :: [a] -> [a] -> [a]
 [] ++ ys = ys
 (x:xs) ++ ys = x : (xs ++ ys)
 ```
@@ -46,7 +46,7 @@ Reverse its list argument
 ```haskell
 reverse :: [a] -> [a]
 reverse [] = []
-reverse (x:xs) = reverse xs ++ [x]
+reverse (x:xs) = reverse xs ++ x
 ```
 
 ### Span - 2019, 2016
