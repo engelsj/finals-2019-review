@@ -4,9 +4,8 @@ a. Returns the list with its first element removed, if it is non-empty, with a r
 
 ```haskell
 tail :: [a] -> [a]
+tail (_:xs) = xs
 tail [] = error "Empty List"
-tail [x] = [] 
-tail (x:xs) = x
 ```
 
 b. Concatenate two lists together 
@@ -22,6 +21,6 @@ c. Returns everything but the last element of a list, if it is non-empty, with a
 ```Haskell
 init :: [a] -> [a]
 init [] = error "Empty List"
-
+init x
 ```
 
