@@ -53,11 +53,11 @@ minimum [] = error "Prelude.minimum Minimum of empty list" -- Empty List
 minimum[x] = x -- Singleton List
 minimum(x:xs) = min x (minimum xs) -- Non-Empty List
 
-min[x] = x
-min(x:xs)
-	= if x < min xs
-		then x
-		else min xs 
+min :: Ord a => a -> a -> a
+min a b
+	| a < b = a
+	| a > b = b 
+	| a == b = a
 ```
 
 2. We have a binary search tree built from number-string pairs, ordered by the number (acting as key)
@@ -82,9 +82,9 @@ min(x:xs)
 
 a. Describe the three ways in which function ```lookup``` can fail, with Haskell runtime pattern-matching errors.
 
-Match the pattern but do not pass the guards where x != i 
-
-No pattern that matches when the answer is within the Btwo tree 
+1. ```lookup``` can fail if the function is passed an empty ```BinTree``` as there is not pattern matching that case. 
+2. ```lookup``` can fail if the ```i``` is not within the tree as the only condition in which the function returns is if ```i``` is found within the tree
+3. ```lookup``` will fail if `i` is inside a `Btwo` because the function only checks if it should go left or right from a `Btwo` and not if `i` is equal to the value within `Btwo`
 
 b. Add in error handling for function ```lookup``` above, using the ```Maybe``` type, to ensure this function is now total. Note that this will require changing the type of the ```lookup``` function. Your answer should give the new type.
 
@@ -95,14 +95,24 @@ lookup (Bone i s) x
 	| i == x Just s 
 	| otherwise Nothing
 
-lookup(Btwo left i s right) x
+lookup (Btwo left i s right) x
 	| x < i = lookup left x
 	| x > i = lookup right x
 ```
 
 c. Add in generic error handling for the ```lookup``` function above, using monads, ensuring it is now total, and giving back a useful error message. Note that this will require changing the type (again) of the ```lookup``` function and your answer should give the revised type. 
 
-```
+```Haskell
+lookup :: (Monad m) => BinTree -> Int -> m String
 
+lookup (Bone i s) x 
+	| x == i = return s
+	| otherwise error "Key Not Found"
+
+lookup (Btwo left i s right) x
+	| x == i = return s
+	| x > i = lookup left x
+	| x < i = lookup right x
+	| otherwise = error "Key Not Found"
 ```
 
