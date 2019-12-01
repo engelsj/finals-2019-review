@@ -111,4 +111,54 @@ edge(A,B) :- edge(B,A).
 
 Why is this problematic, and how can we get around this problem whilist turning edge into a symmetric predicate symEdge?
 
+```
+symEdge(A,B) :- edge(A,B); edge(B,A). 
+```
+
+
+
+3a. What are difference list and how are they useful?
+
+
+
+3b. A simple DCG for generating bit strings (i.e. lists of 0 and 1) is
+
+```
+s --> [].
+s --> s,b.
+
+b --> [0].
+b --> [1].
+
+% For Example
+?- s(L,[]).
+L = [] ? ;
+L = [0] ? ;
+L = [1] ? ;
+L = [0,0] ? ;
+L = [0,1] ? ; 
+L = [1,0] ? ;
+L = [1,1] ? ;
+L = [0,0,0] ? ;
+```
+
+But what is problematic about the query 
+
+```
+? - s([a],[])
+```
+
+and how can we fix the DCG above so that the Prolog interpreter answers no to this query.
+
+c. Write out the DCF given in part (b) as ordinary Prolog clauses, making the difference lists explicit
+
+```
+s(A,A).
+s(A,B) :- s(A,C), b(C,B).
+b([0|B],B).
+b([1|B],B).
+```
+
+
+
  
