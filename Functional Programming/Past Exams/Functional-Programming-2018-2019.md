@@ -96,6 +96,7 @@ lookup (Bone i s) x
 	| otherwise Nothing
 
 lookup (Btwo left i s right) x
+	| x == i = Just s
 	| x < i = lookup left x
 	| x > i = lookup right x
 ```
@@ -104,6 +105,8 @@ c. Add in generic error handling for the ```lookup``` function above, using mona
 
 ```Haskell
 lookup :: (Monad m) => BinTree -> Int -> m String
+
+lookup Bnul i = error "Empty Tree"
 
 lookup (Bone i s) x 
 	| x == i = return s
