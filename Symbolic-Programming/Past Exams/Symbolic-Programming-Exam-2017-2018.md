@@ -12,20 +12,32 @@ c(Count) --> [c], c(Cnt), {Count is Cnt + 1}.1a. State how a Prolog interpreter 
 ```
 ?- X = 1+1
 X = 1+1
+
 ?- X is 1+1
 X = 2
+
 ?- love(john,mary)
 error
+
 ?- asset(love(john,mary))
 love(john,mary)
+
 ?- .([],.(a,Y)) = [X,a]
 error
+
 ?- setof(X,X=X,L).
+L = [_1234]
+
 ?- findall(X,X=f(X),L).
+L = [_1234],
+	_1234 = f(_123)
+
 ?- X = 1, X <2.
 true
+
 ?- X \= 2, X=1.
 False
+
 ?- X < 2
 Error --> Arguments not sufficiently instantiated
 ```
@@ -82,33 +94,31 @@ mixed(pred(X)) :- mixed(X).
 
 3a. What are difference lists and how are they useful?
 
+Difference lists represent the information about grammatical categories not as a single list, but as the difference between two lists. Through the use of difference lists, programmers can avoid inefficient, repetitive calls to `append/3`. This is because the program looks to consume each part of the list and  then check if the resulting list is empty, meaning that every piece of grammar within the list has been properly consumed.
+
 3b. Define a DCG for the set of strings (a^n)(b^n+m)(c^m) of length 2n +2m for m >= 0. For full marks avoid the muse of extra arguments in the DCG.
 
 ```
-s --> a(CntA), b(CntB), c(CntC), {CntB is CntA + CntB}.
-
-a(0) --> [].
-a(Count) --> [a], a(Cnt), {Count is Cnt + 1}.
-
-b(0) --> [].
-b(Count) --> [b], b(Cnt), {Count is Cnt + 1}.
-
-c(0) --> [].
-c(Count) --> [c], c(Cnt), {Count is Cnt + 1}.
+s --> a, b.
+a --> [].
+a --> [a], a, [b].
+b --> [].
+b --> [b], b, [c].
 ```
 
 3c. Write out the DCG you have in part b as ordinary Prolog clauses, making the differences lists explicit.
 
 ```
-s(A,D) :- a(CntA,A,B), b(CntB,B,C), c(CntC,C,D), {CntB is CntA + CntB}.
+s(A,D) :- a(A,C), b(C,D).
 
-a(0,_) :- [].
-a(Count, [a|W]) :- a(Cnt, W), {Count is Cnt + 1}.
+a([],W).
+aa([a|W], W).
+ab([b|W], W).
+a(A,D):- aa(A,B), a(B,C), ab(C,D).
 
-b(0,_) :- [].
-b(Count, [b|W]) :- b(Cnt, W), {Count is Cnt + 1}.
-
-c(0,_) :- [].
-c(Count, [c|W]) :- c(Cnt, W), {Count is Cnt + 1}.
+b([],W).
+b(A,D):- bb(A,B), b(B,C), bc(C,D).
+bb([b|W], W).
+bc([b|W],W).
 ```
 

@@ -119,7 +119,7 @@ symEdge(A,B) :- edge(A,B); edge(B,A).
 
 3a. What are difference list and how are they useful?
 
-
+Difference lists represent the information about grammatical categories not as a single list, but as the difference between two lists. Through the use of difference lists, programmers can avoid inefficient, repetitive calls to `append/3`. This is because the program looks to consume each part of the list and  then check if the resulting list is empty, meaning that every piece of grammar within the list has been properly consumed.
 
 3b. A simple DCG for generating bit strings (i.e. lists of 0 and 1) is
 
@@ -150,13 +150,13 @@ But what is problematic about the query
 
 and how can we fix the DCG above so that the Prolog interpreter answers no to this query.
 
-Having s 
+The query `s([a],[])` is problematic for this DCG because the DCG uses tail recurison by continuing to call `s` is in `s --> s,b` because `s` is the first argument. The program will fall into an infinite loop and crash due to a stack overflow error. By moving the recursive call after the `b`, the program will finish running.  
 
 3c. Write out the DCF given in part (b) as ordinary Prolog clauses, making the difference lists explicit
 
 ```
 s(A,A).
-s(A,B) :- s(A,C), b(C,B).
+s(A,B) :- b(A,C), s(C,B).
 b([0|B],B).
 b([1|B],B).
 ```
